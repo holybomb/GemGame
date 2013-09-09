@@ -28,6 +28,10 @@ local.properties
 # PDT-specific
 .buildpath
 
+# Android
+gen/
+assets/
+libs/
 
 #################
 ## Visual Studio
@@ -43,8 +47,8 @@ local.properties
 
 # Build results
 
-[Dd]ebug/
-[Rr]elease/
+[Dd]ebug.win32/
+[Rr]elease.win32/
 x64/
 build/
 [Bb]in/

@@ -1,11 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="win32">
-      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Classes">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{daf4eabb-2d98-492a-80c4-4c899f7b9956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\fonts">
+      <UniqueIdentifier>{92feaeb0-d143-46c9-9261-af56a6ec12f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\crystrals">
+      <UniqueIdentifier>{20ff4665-a5ac-4429-911c-59a797489b25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\gamescene">
+      <UniqueIdentifier>{e3d26827-a14d-4ea6-b4a4-f4c709860a22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\menuscene">
+      <UniqueIdentifier>{6646c62b-37b7-45bd-b004-e4e42a6b345c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\particles">
+      <UniqueIdentifier>{573a2f75-dcd7-4c43-8872-529f4f1a899a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -15,9 +33,22 @@
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
+    <ClCompile Include="..\Classes\Block.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameData.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MainMenuScene.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utils.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\BlockPan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -26,8 +57,152 @@
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\HelloWorldScene.h">
+    <ClInclude Include="..\Classes\Block.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\GameData.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MainMenuScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utils.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameDefine.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\BlockPan.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\background.png">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Resources\clickme.png">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Resources\clickme-down.png">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Resources\CloseNormal.png">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Resources\CloseSelected.png">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Resources\HelloWorld.png">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Resources\fonts\Marker Felt.ttf">
+      <Filter>Resources\fonts</Filter>
+    </None>
+    <None Include="..\Resources\fonts\scorefont.fnt">
+      <Filter>Resources\fonts</Filter>
+    </None>
+    <None Include="..\Resources\fonts\scorefont.png">
+      <Filter>Resources\fonts</Filter>
+    </None>
+    <None Include="..\Resources\gamescene\go.png">
+      <Filter>Resources\gamescene</Filter>
+    </None>
+    <None Include="..\Resources\gamescene\header.png">
+      <Filter>Resources\gamescene</Filter>
+    </None>
+    <None Include="..\Resources\gamescene\timer.png">
+      <Filter>Resources\gamescene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\about-bg.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\about-fade.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\btn-about.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\btn-about-down.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\btn-done.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\btn-done-down.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\btn-play.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\btn-play-down.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\menuscene\logo.png">
+      <Filter>Resources\menuscene</Filter>
+    </None>
+    <None Include="..\Resources\particles\bg-stars.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\falling-gem.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\power-play.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\taken-gem.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\taken-gem.png">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\taken-hrow.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\taken-vrow.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\0.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\1.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\2.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\3.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\4.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\blocktiles.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\bomb.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\bomb-explo.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\bomb-explo-inner.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\bomb-hi.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\bomb-light.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\crystrals\sparkle.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\gamescene\btn-pause-down.png">
+      <Filter>Resources\gamescene</Filter>
+    </None>
+    <None Include="..\Resources\gamescene\btn-pause.png">
+      <Filter>Resources\gamescene</Filter>
+    </None>
   </ItemGroup>
 </Project>

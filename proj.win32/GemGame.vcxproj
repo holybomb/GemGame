@@ -128,12 +128,23 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
+    <ClCompile Include="..\Classes\Block.cpp" />
+    <ClCompile Include="..\Classes\BlockPan.cpp" />
+    <ClCompile Include="..\Classes\GameData.cpp" />
+    <ClCompile Include="..\Classes\GameScene.cpp" />
+    <ClCompile Include="..\Classes\MainMenuScene.cpp" />
+    <ClCompile Include="..\Classes\Utils.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\HelloWorldScene.h" />
+    <ClInclude Include="..\Classes\Block.h" />
+    <ClInclude Include="..\Classes\BlockPan.h" />
+    <ClInclude Include="..\Classes\GameData.h" />
+    <ClInclude Include="..\Classes\GameDefine.h" />
+    <ClInclude Include="..\Classes\GameScene.h" />
+    <ClInclude Include="..\Classes\MainMenuScene.h" />
+    <ClInclude Include="..\Classes\Utils.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +168,50 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
       <Project>{207bc7a9-ccf1-4f2f-a04d-45f72242ae25}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\background.png" />
+    <None Include="..\Resources\clickme-down.png" />
+    <None Include="..\Resources\clickme.png" />
+    <None Include="..\Resources\CloseNormal.png" />
+    <None Include="..\Resources\CloseSelected.png" />
+    <None Include="..\Resources\crystrals\0.png" />
+    <None Include="..\Resources\crystrals\1.png" />
+    <None Include="..\Resources\crystrals\2.png" />
+    <None Include="..\Resources\crystrals\3.png" />
+    <None Include="..\Resources\crystrals\4.png" />
+    <None Include="..\Resources\crystrals\blocktiles.png" />
+    <None Include="..\Resources\crystrals\bomb-explo-inner.png" />
+    <None Include="..\Resources\crystrals\bomb-explo.png" />
+    <None Include="..\Resources\crystrals\bomb-hi.png" />
+    <None Include="..\Resources\crystrals\bomb-light.png" />
+    <None Include="..\Resources\crystrals\bomb.png" />
+    <None Include="..\Resources\crystrals\sparkle.png" />
+    <None Include="..\Resources\fonts\Marker Felt.ttf" />
+    <None Include="..\Resources\fonts\scorefont.fnt" />
+    <None Include="..\Resources\fonts\scorefont.png" />
+    <None Include="..\Resources\gamescene\btn-pause-down.png" />
+    <None Include="..\Resources\gamescene\btn-pause.png" />
+    <None Include="..\Resources\gamescene\go.png" />
+    <None Include="..\Resources\gamescene\header.png" />
+    <None Include="..\Resources\gamescene\timer.png" />
+    <None Include="..\Resources\HelloWorld.png" />
+    <None Include="..\Resources\menuscene\about-bg.png" />
+    <None Include="..\Resources\menuscene\about-fade.png" />
+    <None Include="..\Resources\menuscene\btn-about-down.png" />
+    <None Include="..\Resources\menuscene\btn-about.png" />
+    <None Include="..\Resources\menuscene\btn-done-down.png" />
+    <None Include="..\Resources\menuscene\btn-done.png" />
+    <None Include="..\Resources\menuscene\btn-play-down.png" />
+    <None Include="..\Resources\menuscene\btn-play.png" />
+    <None Include="..\Resources\menuscene\logo.png" />
+    <None Include="..\Resources\particles\bg-stars.plist" />
+    <None Include="..\Resources\particles\falling-gem.plist" />
+    <None Include="..\Resources\particles\power-play.plist" />
+    <None Include="..\Resources\particles\taken-gem.plist" />
+    <None Include="..\Resources\particles\taken-gem.png" />
+    <None Include="..\Resources\particles\taken-hrow.plist" />
+    <None Include="..\Resources\particles\taken-vrow.plist" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
