@@ -193,3 +193,32 @@ void GameScene::showGo()
 	goSprite->setVisible(false);
 	goSprite->runAction(act);
 }
+
+void GameScene::update( float delta )
+{
+
+}
+
+void GameScene::registerWithTouchDispatcher()
+{
+	CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this,-1,false);
+}
+
+
+bool GameScene::ccTouchBegan( CCTouch *pTouch, CCEvent *pEvent )
+{
+	mStartFlip = true;
+	return true;
+}
+
+void GameScene::ccTouchMoved( CCTouch *pTouch, CCEvent *pEvent )
+{
+	if(!mStartFlip) return;
+}
+
+void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
+{
+	if(!mStartFlip) return;
+}
+
+static GameData* data = NULL;

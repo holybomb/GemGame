@@ -43,6 +43,11 @@ public:
 	void updateScore(float dt);
 	void backToMainMenu();
 	void backToMainMenu(CCObject* obj);
+	void update(float delta);
+	void registerWithTouchDispatcher();
+	bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
+	void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
+	void ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent);
 };
 
 #endif // __HELLOWORLD_SCENE_H__
