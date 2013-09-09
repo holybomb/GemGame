@@ -31,6 +31,7 @@ public:
 	static Block* create(int x,int y,int col);
 	void setBlockPosTile(int x,int y);
 	void setBlockPosTile(CCObject* point);
+	void setSelected(bool select);
 	void customInit(int x,int y,int col);
 	void blockRemove();
 };

@@ -88,9 +88,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\background.png">
-      <Filter>Resources</Filter>
-    </None>
     <None Include="..\Resources\clickme.png">
       <Filter>Resources</Filter>
     </None>
@@ -212,6 +209,9 @@
       <Filter>Resources\gamescene</Filter>
     </None>
     <None Include="..\Resources\gamescene\btn-pause.png">
+      <Filter>Resources\gamescene</Filter>
+    </None>
+    <None Include="..\Resources\gamescene\background.png">
       <Filter>Resources\gamescene</Filter>
     </None>
   </ItemGroup>

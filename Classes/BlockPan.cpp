@@ -1,5 +1,6 @@
 #include "BlockPan.h"
 #include "GameDefine.h"
+#include "Utils.h"
 
 
 BlockPan::BlockPan(void)
@@ -95,6 +96,23 @@ Block* BlockPan::findBlockByPos(int x,int y)
 	return NULL;
 }
 
+Block* BlockPan::findBlockByTouch(CCTouch* pTouch)
+{
+	int index = 0;
+	CCArray* blocks = mGameLayer->getChildren();
+	CCObject* obj = NULL;
+	CCARRAY_FOREACH(blocks,obj)
+	{
+		Block* block = (Block*)obj;
+		CCRect rc = Utils::getRect(block);
+		CCPoint touchPoint = block->convertTouchToNodeSpace(pTouch);
+		if(rc.containsPoint(touchPoint))
+		{
+			return block;
+		}
+	}
+	return NULL;
+}
 void BlockPan::showGameEnd()
 {
 	if(mGameLayer)

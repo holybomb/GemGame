@@ -68,6 +68,12 @@ void Block::setBlockPosTile(CCObject* obj)
 	setBlockPosTile(p->x,p->y);
 }
 
+void Block::setSelected( bool select )
+{
+	isSelected = select;
+	setOpacity(select?150:255);
+}
+
 
 BlockPos* BlockPos::create(CCPoint pTile,CCPoint pPos)
 {

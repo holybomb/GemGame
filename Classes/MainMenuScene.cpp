@@ -147,7 +147,7 @@ bool MainMenuBGLayer::init()
 	{
 		return false;
 	}
-	CCSprite* bgSprite = CCSprite::create("background.png");
+	CCSprite* bgSprite = CCSprite::create("CloseNormal.png");
 	bgSprite->setAnchorPoint(ccp(0.0f,0.0f));
 	mBgEffectLayer = createBGEffect();
 	mBgEffectLayer->setContentSize(CCSizeMake(DESIGN_SCREEN_SIZE_W,DESIGN_SCREEN_SIZE_H));

@@ -207,18 +207,22 @@ void GameScene::registerWithTouchDispatcher()
 
 bool GameScene::ccTouchBegan( CCTouch *pTouch, CCEvent *pEvent )
 {
-	mStartFlip = true;
+	BlockController::shareData()->mStartFlip=true;
+	Block* block = gameLayer->findBlockByTouch(pTouch);
+	BlockController::shareData()->mCurType = block->blockType;
+	block->setSelected(true);
 	return true;
 }
 
 void GameScene::ccTouchMoved( CCTouch *pTouch, CCEvent *pEvent )
 {
-	if(!mStartFlip) return;
+	if(!BlockController::shareData()->mStartFlip) return;
 }
 
 void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 {
-	if(!mStartFlip) return;
+	if(!(BlockController::shareData()->mStartFlip)) return;
+	BlockController::shareData()->mStartFlip = false;
 }
 
 static GameData* data = NULL;

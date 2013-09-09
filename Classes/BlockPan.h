@@ -18,5 +18,6 @@ public:
 	Block* createNewBlock(int x,int y,int col);
 	Block* findBlockByPos(int x,int y);
 	void showGameEnd();
+	Block* findBlockByTouch(CCTouch* pTouch);
 };
 
