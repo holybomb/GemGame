@@ -50,6 +50,7 @@ CCLayer* BlockPan::createGameLayer()
 			Block* sprite = createNewBlock(i,j,i);
 			spriteBg->setPosition(sprite->getPosition());
 			sprite->setVisible(false);
+			
 			mGameLayer->addChild(sprite);
 			mGameLayerBG->addChild(spriteBg);
 		}
@@ -62,7 +63,38 @@ CCLayer* BlockPan::createGameLayer()
 	mGameLayer->setPosition(ccp(0,0));
 	return mMainLayer;
 }
-
+void BlockPan::showDebugTxt()
+{
+	if (!CCDirector::sharedDirector()->isDisplayStats())
+	{
+		return;
+	}
+	/*BLOCK_FOREACH_CHILD(mGameLayer)*/
+	CCArray* blocks = mGameLayer->getChildren();
+	blocks->retain();
+	CCObject* obj = NULL;
+	CCARRAY_FOREACH(blocks,obj)
+	{
+		Block* block = (Block*)obj;
+		if(!block)
+			continue;
+		int x = block->mBlockPos->x;
+		int y = block->mBlockPos->y;
+		CCLabelTTF* txt = CCLabelTTF::create(CCString::createWithFormat("%d,%d",x,y)->getCString(),
+			"",50);
+		txt->setColor(ccc3(255,0,0));
+		txt->setHorizontalAlignment(kCCTextAlignmentCenter);
+		txt->setVerticalAlignment(kCCVerticalTextAlignmentCenter);
+		CCLayerColor* layer = CCLayerColor::create(ccc4(255,255,255,100));
+		layer->addChild(txt);
+		layer->setAnchorPoint(ccp(0,0));
+		CCRect rect = Utils::getRect(block,mGameLayer);
+		layer->setPosition(ccp(rect.origin.x,rect.origin.y));
+		layer->setContentSize(block->getContentSize());
+		txt->setPosition(ccp(layer->getContentSize().width/2,layer->getContentSize().height/2));
+		this->addChild(layer,10);
+	}
+}
 Block* BlockPan::createNewBlock(int x,int y,int col)
 {
 	CCPoint pos;
@@ -76,6 +108,7 @@ Block* BlockPan::createNewBlock(int x,int y,int col)
 	pos = ccp(posX,posY);
 	Block* newBlock = Block::create(x,y,col);
 	newBlock->setPosition(pos);
+
 	newBlock->setBlockPosTile(x,y);
 	return newBlock;
 }
@@ -96,6 +129,25 @@ Block* BlockPan::findBlockByPos(int x,int y)
 	return NULL;
 }
 
+int BlockPan::findLastLineByCol(int col)
+{
+	int line = 0;
+	CCArray* blocks = mGameLayer->getChildren();
+	CCObject* obj = NULL;
+	CCARRAY_FOREACH(blocks,obj)
+	{
+		Block* block = (Block*)obj;
+		if (block->mBlockPos->x==col)
+		{
+			if (line<block->mBlockPos->y)
+			{
+				line = block->mBlockPos->y;
+			}
+		}
+	}
+	return line;
+}
+
 Block* BlockPan::findBlockByTouch(CCTouch* pTouch)
 {
 	int index = 0;
@@ -104,9 +156,9 @@ Block* BlockPan::findBlockByTouch(CCTouch* pTouch)
 	CCARRAY_FOREACH(blocks,obj)
 	{
 		Block* block = (Block*)obj;
-		CCRect rc = Utils::getRect(block);
-		CCPoint touchPoint = block->convertTouchToNodeSpace(pTouch);
-		if(rc.containsPoint(touchPoint))
+		CCRect rect = Utils::getRect(block,mGameLayer);
+		CCPoint touchPoint = mGameLayer->convertTouchToNodeSpaceAR(pTouch);
+		if(rect.containsPoint(touchPoint))
 		{
 			return block;
 		}

@@ -9,6 +9,16 @@ CCRect Utils::getRect(CCNode* pNode)
 	rc.origin.y -= rc.size.height*0.5; 
 	return rc; 
 } 
+
+cocos2d::CCRect Utils::getRect( CCNode* pNode,CCNode* pBase )
+{
+	CCPoint winPoint = pBase->convertToNodeSpace(pNode->getPosition());
+	CCPoint winAnchor = pNode->getAnchorPoint();
+	winPoint.x = winPoint.x-pNode->getContentSize().width*winAnchor.x;
+	winPoint.y = winPoint.y-pNode->getContentSize().height*winAnchor.y;
+	return CCRectMake(winPoint.x,winPoint.y, pNode->getContentSize().width, pNode->getContentSize().height);
+}
+
 int Utils::randomBetweenInt(int max, int min)   
 {   
 	time_t t;   

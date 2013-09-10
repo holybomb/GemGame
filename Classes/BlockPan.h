@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 #include "Block.h"
+#define BLOCK_FOREACH_CHILD(__LAYER__) 	CCArray* blocks = (__LAYER__)->getChildren();	CCObject* obj = NULL; CCARRAY_FOREACH(blocks,obj)
 USING_NS_CC;
 class BlockPan:public CCLayer
 {
@@ -19,5 +20,7 @@ public:
 	Block* findBlockByPos(int x,int y);
 	void showGameEnd();
 	Block* findBlockByTouch(CCTouch* pTouch);
+	void showDebugTxt();
+	int findLastLineByCol(int col);
 };
 

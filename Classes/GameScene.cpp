@@ -3,16 +3,24 @@
 #include "MainMenuScene.h"
 USING_NS_CC;
 USING_NS_CC_EXT;
+static GameScene* gameScene = NULL;
+GameScene* GameScene::shareGameScene()
+{
+	if (!gameScene)
+	{
+		gameScene = new GameScene();
+	}
+	return gameScene;
+}
 CCScene* GameScene::scene()
 {
     // 'scene' is an autorelease object
     CCScene *scene = CCScene::create();
-    
     // 'layer' is an autorelease object
-    GameScene *layer = GameScene::create();
+	gameScene = GameScene::create();
 
     // add layer as a child to scene
-    scene->addChild(layer);
+    scene->addChild(gameScene);
     // return the scene
     return scene;
 }
@@ -28,7 +36,7 @@ bool GameScene::init()
     }
 	mTime = -4;
 	mSelectBlock = NULL;
-	CCSprite* bgSprite = CCSprite::create("background.png");
+	CCSprite* bgSprite = CCSprite::create(RESOURCE_PATH_GAME("background.png"));
 	bgSprite->setAnchorPoint(ccp(0.0f,0.0f));
     this->addChild(bgSprite);
 	gameLayer = BlockPan::create();
@@ -73,6 +81,8 @@ void GameScene::countTime(float dt)
 	}
 	if(mTime==0)
 	{
+
+		gameLayer->showDebugTxt();
 		pr->setPercentage(0);
 		CCProgressTo* to = CCProgressTo::create(TOTAL_GAME_TIME,100);
 		pr->setReverseProgress(true);
@@ -101,6 +111,7 @@ void GameScene::menuCloseCallback(CCObject* pSender)
 
 void GameScene::restartScene( CCObject* pSender )
 {
+	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
 	this->runAction(CCSequence::create(CCDelayTime::create(1.5f),CCCallFunc::create(this,callfunc_selector(GameScene::backToMainMenu)),NULL));
 }
@@ -147,6 +158,7 @@ CCLayer* GameScene::showTimerBoarder()
 }
 void GameScene::showGameEnd()
 {
+	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
 	CCLayer* gameEndLayer = CCLayer::create();
 	CCSprite* bgSprite = CCSprite::create(RESOURCE_PATH_MENU("about-fade.png"));
@@ -192,12 +204,9 @@ void GameScene::showGo()
 	CCSequence* act = CCSequence::create(CCHide::create(),scaleSmall,CCShow::create(),eff,CCDelayTime::create(0.2f),CCScaleTo::create(0.5f,0),CCRemoveSelf::create(),NULL);
 	goSprite->setVisible(false);
 	goSprite->runAction(act);
+	setTouchEnabled(true);
 }
 
-void GameScene::update( float delta )
-{
-
-}
 
 void GameScene::registerWithTouchDispatcher()
 {
@@ -207,22 +216,243 @@ void GameScene::registerWithTouchDispatcher()
 
 bool GameScene::ccTouchBegan( CCTouch *pTouch, CCEvent *pEvent )
 {
-	BlockController::shareData()->mStartFlip=true;
 	Block* block = gameLayer->findBlockByTouch(pTouch);
-	BlockController::shareData()->mCurType = block->blockType;
-	block->setSelected(true);
-	return true;
+	BlockController::shareData()->selectBlock = CCArray::create();
+	BlockController::shareData()->selectBlock->retain();
+	if(block)
+	{
+		BlockController::shareData()->mCurType = block->blockType;
+		block->setSelected(true);
+		BlockController::shareData()->mStartFlip=true;
+		if(BlockController::shareData()->selectBlock->count()>0)
+			BlockController::shareData()->selectBlock->removeAllObjects();
+		BlockController::shareData()->selectBlock->addObject(block);
+		addTouchEffect(block);
+		return true;
+	}
+	return false;
 }
 
 void GameScene::ccTouchMoved( CCTouch *pTouch, CCEvent *pEvent )
 {
-	if(!BlockController::shareData()->mStartFlip) return;
+	if(BlockController::shareData()->mCurType<0)
+		return;
+	Block* block = gameLayer->findBlockByTouch(pTouch);
+	if(block)
+	{
+		Block* lastBlock = (Block*)BlockController::shareData()->selectBlock->lastObject();
+		if(BlockController::shareData()->selectBlock->containsObject(block)
+			|| block->blockType!=BlockController::shareData()->mCurType
+			|| (abs(lastBlock->mBlockPos->x-block->mBlockPos->x)>1 || abs(lastBlock->mBlockPos->y-block->mBlockPos->y)>1)
+			|| (
+					(lastBlock->mBlockPos->x%2==0) 
+					&& abs(lastBlock->mBlockPos->x-block->mBlockPos->x)==1 
+					&& (block->mBlockPos->y>lastBlock->mBlockPos->y))
+				)
+		{
+			return;
+		}
+		else
+		{
+			block->setSelected(true);
+			addTouchEffect(block);
+			BlockController::shareData()->selectBlock->addObject(block);
+		}
+	}
 }
-
+void GameScene::addTouchEffect(Block* block)
+{
+	CCParticleFire* fire = CCParticleFire::create();
+	fire->setDuration(0.2);
+	fire->setAutoRemoveOnFinish(true);
+	fire->setContentSize(block->getContentSize());
+	fire->setPosition(block->getPosition());
+	gameLayer->addChild(fire);
+}
 void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 {
 	if(!(BlockController::shareData()->mStartFlip)) return;
+	CCObject* obj = NULL;
+	CCArray* blocks = gameLayer->mGameLayer->getChildren();
+	BlockController::shareData()->selectBlock->removeAllObjects();
+	CCARRAY_FOREACH(blocks,obj)
+	{
+		Block* block = (Block*)obj;
+		if (BlockController::shareData()->selectBlock->containsObject(block))
+		{
+			return;
+		}
+		if (block!=NULL && block->isSelected && !block->isRemoved)
+		{
+			BlockController::shareData()->selectBlock->addObject(block);
+			int temp = PER_BLOCK_SCORE*BlockController::shareData()->selectBlock->count();
+			GameData::shareData()->addScore(temp);
+		}
+	}
+
 	BlockController::shareData()->mStartFlip = false;
+	if(BlockController::shareData()->selectBlock->count()<3)
+	{
+		BlockController::shareData()->resetSelect();
+		return;
+	}
+	int blockNum = BlockController::shareData()->selectBlock->count();
+	GameData::shareData()->setScore(PER_BLOCK_SCORE*((blockNum*(blockNum+1))/2));
+	updateScore(GameData::shareData()->getScore());
+	
+	CCARRAY_FOREACH(BlockController::shareData()->selectBlock,obj)
+	{
+		Block* block = (Block*)obj;
+		int lastLine = gameLayer->findLastLineByCol(block->mBlockPos->x);
+		gameLayer->mGameLayer->addChild(gameLayer->createNewBlock(block->mBlockPos->x,lastLine+1,block->mBlockPos->x));
+	}
+	blocksRemove();
 }
 
-static GameData* data = NULL;
+GameScene::~GameScene()
+{
+	
+}
+
+void GameScene::blocksRemove()
+{
+	CCObject* obj = NULL;
+	CCArray* removedPos = CCArray::create();
+	removedPos->retain();
+	CCARRAY_FOREACH(BlockController::shareData()->selectBlock,obj)
+	{
+		Block* block = (Block*)obj;
+
+		CCParticleSystem *meteor=CCParticleSystemQuad::create("particles/taken-gem.plist");
+		gameLayer->addChild(meteor);
+		meteor->setScale(2);
+		meteor->setPosition(block->getPosition());
+		BlockPos* pos = block->mBlockPos;
+		removedPos->addObject(pos);
+		int lastLine = gameLayer->findLastLineByCol(pos->x);
+		block->blockRemove();
+		if(block)
+			blockFallDown(block);
+	}
+	//rechargBlocks(removedPos);
+}
+
+void GameScene::blockFallDown( CCObject *obj )
+{
+	setTouchEnabled(false);
+	Block* block = (Block*)obj;
+	CCLOG("fall block is %i,%i",block->mBlockPos->x,block->mBlockPos->y);
+	int lastLine = gameLayer->findLastLineByCol(block->mBlockPos->x);
+	int line = block->mBlockPos->y+1;
+	CCArray* tFallDown = CCArray::create();
+	Block* blockBase = block; 
+	for(int i = line;i<=lastLine;i++)
+	{
+		Block* blockAbove =(Block*)gameLayer->findBlockByPos(block->mBlockPos->x,i);
+		if(blockAbove !=NULL && !blockAbove->isRemoved)
+		{
+			tFallDown->addObject(blockAbove);
+
+			//blockAbove->runAction(CCPlace::create(blockBase->getPosition()));
+			blockBase = blockAbove;
+		}
+	}
+	blockBase = block;
+	CCObject* mBlockAbove = NULL;
+	CCARRAY_FOREACH(tFallDown,mBlockAbove)
+	{
+		Block* blockAbove= (Block*)mBlockAbove;
+		CCMoveTo* moveTo = CCMoveTo::create(0.1f,blockBase->getPosition());
+		CCEaseSineInOut * easeIn = CCEaseSineInOut::create(moveTo);
+		blockAbove->setBlockPosTile(blockAbove->mBlockPos->x,blockAbove->mBlockPos->y-1);
+		CCCallFunc* callF = CCCallFunc::create(this,callfunc_selector(GameScene::moveIsDone));
+		CCSequence* seq = CCSequence::create(CCDelayTime::create(0.2f),easeIn,callF,NULL);
+		blockAbove->runAction(seq);
+		//blockAbove->setBlockPos(blockAbove->mBlockPos->x,blockAbove->mBlockPos->y-2);
+		//blockAbove->refreshTxt();
+		blockBase = blockAbove;
+	}
+}
+
+void GameScene::moveIsDone()
+{
+	BlockController::shareData()->mCurType = -1;
+	setTouchEnabled(true);
+	updateScore(0);
+	BlockController::shareData()->selectBlock->removeAllObjects();
+	BlockController::shareData()->movedBlock->removeAllObjects();
+}
+void GameScene::rechargBlocks(CCArray* basePos)
+{
+	CCObject* obj = NULL;
+	CCArray* removedCol = CCArray::create();
+	BlockController::shareData()->movedBlock = CCArray::create();
+	for (int i =0;i<BLOCK_PAN_SIZE_W;i++)
+	{
+		BlockController::shareData()->movedBlock->addObject(CCArray::create());
+	}
+	CCARRAY_FOREACH(basePos,obj)
+	{
+		BlockPos* base = (BlockPos*) obj;
+		int lastLen = gameLayer->findLastLineByCol(base->x);
+		CCArray* row = CCArray::create();
+		for(int i =base->y;i<= lastLen;i++)
+		{
+			Block* block = gameLayer->findBlockByPos(base->x,i);
+			if (block)
+			{
+				row->addObject(block);
+			}
+		}
+		if(((CCArray*)BlockController::shareData()->movedBlock->objectAtIndex(base->x))->count()<=0)
+			BlockController::shareData()->movedBlock->replaceObjectAtIndex(base->x,row,false);
+	}
+
+	int rowNum = 0;
+	CCARRAY_FOREACH(BlockController::shareData()->movedBlock,obj)
+	{
+		CCArray* row = (CCArray*)obj;
+		if(!row || row->count()==0) continue;
+		CCObject* item = NULL;
+		int y = -1;
+		int len= 0;
+		Block* first =NULL;
+		//find first block
+		CCARRAY_FOREACH(row,item)
+		{
+			Block* block =(Block*)item;
+			BlockPos* pos = block->mBlockPos;
+			if(!first || pos->y < first->mBlockPos->y)
+			{
+				first = block;
+			}
+		}
+		//find last Target in col
+		for(int i =0;i<basePos->count();i++)
+		{
+			BlockPos* pos = (BlockPos* ) basePos->objectAtIndex(i);
+			if(first->mBlockPos->x == pos->x)
+			{
+				if(pos->y>y)
+					y = pos->y;
+			}
+		}
+		
+		item = NULL;
+		len = (first->mBlockPos->y-y)*gameLayer->sizeY;
+		CCLog("len = %d,row = %d",len,first->mBlockPos->x);
+		int offIndex = first->mBlockPos->y-y;
+		CCARRAY_FOREACH(row,item)
+		{
+			Block* block =(Block*)item;
+			if (block)
+			{
+				CCMoveBy* moveTo = CCMoveBy::create(0.1f,ccp(0,-len));
+				CCEaseSineInOut * easeIn = CCEaseSineInOut::create(moveTo);
+				block->mBlockPos->y -= offIndex;
+				block->runAction(easeIn);
+			}
+		}
+		rowNum++;
+	}
+}

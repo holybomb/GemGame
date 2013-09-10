@@ -13,7 +13,6 @@ class GameScene : public cocos2d::CCLayer
 private:
 	
 public:
-	GameScene();
 	CCArray* mSelectBlock;
 	int mapW;
 	int mapH;
@@ -26,12 +25,16 @@ public:
 
 
 public:
+	GameScene();
+
+	~GameScene();
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool init();  
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static cocos2d::CCScene* scene();
-    
+
+	static GameScene* shareGameScene();
     // a selector callback
     void menuCloseCallback(CCObject* pSender);
     
@@ -47,11 +50,14 @@ public:
 	void updateScore(float dt);
 	void backToMainMenu();
 	void backToMainMenu(CCObject* obj);
-	void update(float delta);
 	void registerWithTouchDispatcher();
 	bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
 	void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
 	void ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent);
+	void blocksRemove();
+	void rechargBlocks(CCArray* basePos);
+	void blockFallDown( CCObject *obj );
+	void moveIsDone();
+	void addTouchEffect(Block* block);
 };
-
 #endif // __HELLOWORLD_SCENE_H__
