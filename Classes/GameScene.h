@@ -6,6 +6,7 @@
 #include "BlockPan.h"
 #include "BlockController.h"
 #define TOTAL_GAME_TIME 60
+#define THINK_TIME 3
 USING_NS_CC;
 USING_NS_CC_EXT;
 class GameScene : public cocos2d::CCLayer
@@ -19,6 +20,7 @@ public:
 	int mBlockLeft;
 	CCProgressTimer *  pr;
 	int mTime;
+	int mFreeTime;
 	CCLayer* timeBoard;
 	CCLabelBMFont* scoreTxt;
 	BlockPan* gameLayer;
@@ -59,5 +61,6 @@ public:
 	void blockFallDown( CCObject *obj );
 	void moveIsDone();
 	void addTouchEffect(Block* block);
+	void updateThinkTimer(float dt);
 };
 #endif // __HELLOWORLD_SCENE_H__

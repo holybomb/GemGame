@@ -19,6 +19,7 @@ bool MainMenuScene::init()
 		return false;
 	}
 	//this->addChild(fg);
+	this->setKeypadEnabled(true);
 	logo = CCSprite::create(RESOURCE_PATH_MENU("logo.png"));
 	logo->setAnchorPoint(ccp(0.5,0));
 	logo->setPosition(ccp(DESIGN_SCREEN_SIZE_W/2,DESIGN_SCREEN_SIZE_H-logo->getContentSize().height-30));
@@ -32,7 +33,6 @@ bool MainMenuScene::init()
 
 	CCMenuItemImage* playBtn = CCMenuItemImage::create(RESOURCE_PATH_MENU("btn-play.png"),RESOURCE_PATH_MENU("btn-play-down.png"),this,menu_selector(MainMenuScene::onPlayBtn));
 	CCMenuItemImage* aboutBtn = CCMenuItemImage::create(RESOURCE_PATH_MENU("btn-about.png"),RESOURCE_PATH_MENU("btn-about-down.png"),this,menu_selector(MainMenuScene::onAboutBtn));
-	CCMenuItemImage* doneBtn = CCMenuItemImage::create(RESOURCE_PATH_MENU("btn-done.png"),RESOURCE_PATH_MENU("btn-done-down.png"),this,menu_selector(MainMenuScene::onDoneBtn));
 	mainMenu = CCMenu::create(playBtn,aboutBtn,/*doneBtn,*/NULL);;
 	int offY = 0;
 
@@ -44,7 +44,7 @@ bool MainMenuScene::init()
 		((CCNode* )obj)->runAction(CCSequence::create(CCDelayTime::create(0.2*i),(CCAction*)act->copy(),NULL));
 		i++;
 	}
-	
+	exitLayer = NULL;
 	addChild(mainMenu);
 	mainMenu->alignItemsVerticallyWithPadding(offY);
 	mainMenu->setAnchorPoint(ccp(0.5,0.5));
@@ -84,10 +84,17 @@ void MainMenuScene::startPlay()
 {
 	CCDirector::sharedDirector()->replaceScene(GameScene::scene());
 }
-void MainMenuScene::onDoneBtn( CCObject* pSender )
+void MainMenuScene::onExitDoneBtn( CCObject* pSender )
 {
-	CCDirector::sharedDirector()->end();
-	exit(0);
+	exitGame();
+}
+void MainMenuScene::onExitCancelBtn( CCObject* pSender )
+{
+	CCScaleTo* scaleSmall = CCScaleTo::create(0.2f,0);
+	CCSequence* act = CCSequence::create(scaleSmall,CCRemoveSelf::create(true),NULL);
+	exitLayer->runAction(scaleSmall);
+	exitLayer = NULL;
+	mainMenu->setEnabled(true);
 }
 
 void MainMenuScene::onAboutBtn( CCObject* pSender )
@@ -103,11 +110,34 @@ void MainMenuScene::onAboutBtn( CCObject* pSender )
 	aboutLayer->runAction(act);
 	addChild(aboutLayer);
 }
+CCLayer* MainMenuScene::showExitLayer()
+{
+	CCLayer* exiter = CCLayer::create();
+	CCSprite*bg = CCSprite::create(RESOURCE_PATH_MENU("about-bg.png"));
+	bg->setPosition(ccp(DESIGN_SCREEN_SIZE_W/2,DESIGN_SCREEN_SIZE_H/2));
+	CCLabelTTF* aboutTxt = CCLabelTTF::create(
+		"Want to exit ?",RESOURCE_PATH_FONT("Marker Felt.ttf"),60);
+	aboutTxt->setPosition(ccp(DESIGN_SCREEN_SIZE_W/2,590));
+	CCMenuItemFont* yes = CCMenuItemFont::create("YES",this,menu_selector(MainMenuScene::onExitDoneBtn));
+	yes->setFontSize(50);
+	yes->setFontName(RESOURCE_PATH_FONT("Marker Felt.ttf"));
+	CCMenuItemFont* no = CCMenuItemFont::create("NO",this,menu_selector(MainMenuScene::onExitCancelBtn));
+	no->setFontSize(50);
+	no->setFontName(RESOURCE_PATH_FONT("Marker Felt.ttf"));
+	CCMenu* menu = CCMenu::create(yes,no,NULL);
+	menu->alignItemsVerticallyWithPadding(50);
+	menu->setPosition(ccp(DESIGN_SCREEN_SIZE_W/2,DESIGN_SCREEN_SIZE_H/2-50));
+	exiter->addChild(bg);
+	exiter->addChild(aboutTxt);
+	exiter->addChild(menu);
+	return exiter;
+}
 CCLayer* MainMenuScene::showAboutLayer()
 {
 	CCLayer* about = CCLayer::create();
 	CCSprite*bg = CCSprite::create(RESOURCE_PATH_MENU("about-bg.png"));
-	CCLabelTTF* aboutTxt = CCLabelTTF::create("Crystal Craze is created with CocosBuilder and cocos2d. It is released as open source under MIT license. Download the full source:\n https://github.com/vlidholt/CrystalCraze \nDownload CocosBuilder from: \nhttp://cocosbuilder.com \nBackground image is creative commons attribution: NASA, ESA, R. O'Connell (University of Virginia), F. Paresce (National Institute for Astrophysics, Bologna, Italy), E. Young (Universities Space Research Association/Ames Research Center), the WFC3 Science Oversight Committee, and the Hubble Heritage Team (STScI/AURA ","font/Marker Felt.ttf",30);
+	CCLabelTTF* aboutTxt = CCLabelTTF::create(
+		"GemGame is created with cocos2d by lihu","font/Marker Felt.ttf",30);
 	aboutTxt->setPosition(ccp(40,690));
 	aboutTxt->setHorizontalAlignment(kCCTextAlignmentLeft);
 	aboutTxt->setVerticalAlignment(kCCVerticalTextAlignmentTop);
@@ -131,6 +161,36 @@ void MainMenuScene::onAboutDoneBtn(CCObject* pSender)
 	aboutLayer->runAction(scaleSmall);
 	mainMenu->setEnabled(true);
 }
+
+void MainMenuScene::keyBackClicked()
+{
+	if (exitLayer)
+	{
+		onExitCancelBtn(this);
+		return;
+	}
+	CCScaleTo* scaleBig = CCScaleTo::create(0.5f,1);
+	CCScaleTo* scaleSmall = CCScaleTo::create(0.0001f,0);
+	CCEaseBounceOut* eff = CCEaseBounceOut::create(scaleBig);
+	eff->bounceTime(3);
+	CCSequence* act = CCSequence::create(CCHide::create(),scaleSmall,CCShow::create(),eff,NULL);
+	exitLayer = showExitLayer();
+	exitLayer->setVisible(false);
+	exitLayer->runAction(act);
+	addChild(exitLayer);
+}
+
+void MainMenuScene::keyMenuClicked()
+{
+
+}
+
+void MainMenuScene::exitGame()
+{
+	CCDirector::sharedDirector()->end();
+	exit(0);
+}
+
 CCScene* MainScene::scene()
 {
 	CCScene* scene = CCScene::create();

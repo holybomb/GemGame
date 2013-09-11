@@ -187,6 +187,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
     <None Include="..\Resources\crystrals\bomb-hi.png" />
     <None Include="..\Resources\crystrals\bomb-light.png" />
     <None Include="..\Resources\crystrals\bomb.png" />
+    <None Include="..\Resources\crystrals\hint.png" />
     <None Include="..\Resources\crystrals\sparkle.png" />
     <None Include="..\Resources\fonts\Marker Felt.ttf" />
     <None Include="..\Resources\fonts\scorefont.fnt" />

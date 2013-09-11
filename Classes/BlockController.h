@@ -28,6 +28,8 @@ public:
 
 	int mMainState;
 	int mSubState;
+	CCArray* hintBlocks;
+	CCArray* hintSprites;
 public:
 	static BlockController* shareData();
 	void init();

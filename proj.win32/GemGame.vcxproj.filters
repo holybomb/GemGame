@@ -214,5 +214,8 @@
     <None Include="..\Resources\gamescene\background.png">
       <Filter>Resources\gamescene</Filter>
     </None>
+    <None Include="..\Resources\crystrals\hint.png">
+      <Filter>Resources\crystrals</Filter>
+    </None>
   </ItemGroup>
 </Project>

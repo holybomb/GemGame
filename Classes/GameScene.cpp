@@ -81,13 +81,15 @@ void GameScene::countTime(float dt)
 	}
 	if(mTime==0)
 	{
-
 		gameLayer->showDebugTxt();
 		pr->setPercentage(0);
 		CCProgressTo* to = CCProgressTo::create(TOTAL_GAME_TIME,100);
 		pr->setReverseProgress(true);
 		pr->runAction(to);
+		mFreeTime = 0;
+		schedule(schedule_selector(GameScene::updateThinkTimer),1);
 	}
+	
 	if (mTime>=TOTAL_GAME_TIME*80/100)
 	{
 		pr->runAction(CCBlink::create(0.3f,4));
@@ -216,6 +218,15 @@ void GameScene::registerWithTouchDispatcher()
 
 bool GameScene::ccTouchBegan( CCTouch *pTouch, CCEvent *pEvent )
 {
+	CCObject* obj;
+	mFreeTime = -1;
+	CCARRAY_FOREACH(BlockController::shareData()->hintSprites,obj)
+	{
+		CCNode* block = (CCNode*)obj;
+		block->removeFromParent();
+	}
+	BlockController::shareData()->hintSprites->removeAllObjects();
+
 	Block* block = gameLayer->findBlockByTouch(pTouch);
 	BlockController::shareData()->selectBlock = CCArray::create();
 	BlockController::shareData()->selectBlock->retain();
@@ -247,8 +258,9 @@ void GameScene::ccTouchMoved( CCTouch *pTouch, CCEvent *pEvent )
 			|| (
 					(lastBlock->mBlockPos->x%2==0) 
 					&& abs(lastBlock->mBlockPos->x-block->mBlockPos->x)==1 
-					&& (block->mBlockPos->y>lastBlock->mBlockPos->y))
+					&& (block->mBlockPos->y>lastBlock->mBlockPos->y)
 				)
+			)
 		{
 			return;
 		}
@@ -263,7 +275,7 @@ void GameScene::ccTouchMoved( CCTouch *pTouch, CCEvent *pEvent )
 void GameScene::addTouchEffect(Block* block)
 {
 	CCParticleFire* fire = CCParticleFire::create();
-	fire->setDuration(0.2);
+	fire->setDuration(0.2f);
 	fire->setAutoRemoveOnFinish(true);
 	fire->setContentSize(block->getContentSize());
 	fire->setPosition(block->getPosition());
@@ -285,8 +297,6 @@ void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 		if (block!=NULL && block->isSelected && !block->isRemoved)
 		{
 			BlockController::shareData()->selectBlock->addObject(block);
-			int temp = PER_BLOCK_SCORE*BlockController::shareData()->selectBlock->count();
-			GameData::shareData()->addScore(temp);
 		}
 	}
 
@@ -297,7 +307,7 @@ void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 		return;
 	}
 	int blockNum = BlockController::shareData()->selectBlock->count();
-	GameData::shareData()->setScore(PER_BLOCK_SCORE*((blockNum*(blockNum+1))/2));
+	GameData::shareData()->addScore(PER_BLOCK_SCORE*((blockNum*(blockNum+1))/2));
 	updateScore(GameData::shareData()->getScore());
 	
 	CCARRAY_FOREACH(BlockController::shareData()->selectBlock,obj)
@@ -307,6 +317,7 @@ void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 		gameLayer->mGameLayer->addChild(gameLayer->createNewBlock(block->mBlockPos->x,lastLine+1,block->mBlockPos->x));
 	}
 	blocksRemove();
+	mFreeTime = 0;
 }
 
 GameScene::~GameScene()
@@ -362,7 +373,7 @@ void GameScene::blockFallDown( CCObject *obj )
 	CCARRAY_FOREACH(tFallDown,mBlockAbove)
 	{
 		Block* blockAbove= (Block*)mBlockAbove;
-		CCMoveTo* moveTo = CCMoveTo::create(0.1f,blockBase->getPosition());
+		CCMoveBy* moveTo = CCMoveBy::create(0.1f,ccp(0,-gameLayer->sizeY));
 		CCEaseSineInOut * easeIn = CCEaseSineInOut::create(moveTo);
 		blockAbove->setBlockPosTile(blockAbove->mBlockPos->x,blockAbove->mBlockPos->y-1);
 		CCCallFunc* callF = CCCallFunc::create(this,callfunc_selector(GameScene::moveIsDone));
@@ -428,7 +439,7 @@ void GameScene::rechargBlocks(CCArray* basePos)
 			}
 		}
 		//find last Target in col
-		for(int i =0;i<basePos->count();i++)
+		for(unsigned int i =0;i<basePos->count();i++)
 		{
 			BlockPos* pos = (BlockPos* ) basePos->objectAtIndex(i);
 			if(first->mBlockPos->x == pos->x)
@@ -454,5 +465,20 @@ void GameScene::rechargBlocks(CCArray* basePos)
 			}
 		}
 		rowNum++;
+	}
+}
+
+void GameScene::updateThinkTimer(float dt)
+{
+	if(mFreeTime < 0)
+	{
+		return;
+	}
+
+	mFreeTime++;
+	if(mFreeTime>THINK_TIME)
+	{
+		gameLayer->CheckForHint();
+		mFreeTime = -1;
 	}
 }

@@ -24,14 +24,20 @@ public:
 	bool init();
 	CREATE_FUNC(MainMenuScene);
 	void onPlayBtn(CCObject* pSender);
-	void onDoneBtn(CCObject* pSender);
+	void onExitDoneBtn(CCObject* pSender);
 	void onAboutBtn(CCObject* pSender);
 	CCLayer* showAboutLayer();
 	void onAboutDoneBtn(CCObject* pSender);
 	void startPlay();
 	CCMenu* mainMenu;
 	CCLayer* aboutLayer;
+	CCLayer* exitLayer;
 	CCSprite* logo;
+	void exitGame();
+	virtual void keyBackClicked();//Android ·µ»Ø¼ü
+	virtual void keyMenuClicked();//Android ²Ëµ¥¼ü
+	CCLayer* showExitLayer();
+	void onExitCancelBtn( CCObject* pSender );
 };
 class MainMenuBGLayer : public CCLayer
 {

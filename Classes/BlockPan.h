@@ -22,5 +22,7 @@ public:
 	Block* findBlockByTouch(CCTouch* pTouch);
 	void showDebugTxt();
 	int findLastLineByCol(int col);
+	void CheckForHint();
+	Block* findBlockByCentre(Block* block,CCArray* ignorBlocks);
 };
 

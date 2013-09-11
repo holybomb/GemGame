@@ -20,6 +20,10 @@ void BlockController::init()
 	selectBlock->retain();
 	movedBlock = CCArray::create();
 	movedBlock->retain();
+	hintBlocks = CCArray::create();
+	hintBlocks->retain();
+	hintSprites = CCArray::create();
+	hintSprites->retain();
 }
 
 void BlockController::update( float dt )

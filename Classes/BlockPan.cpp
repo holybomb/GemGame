@@ -1,6 +1,7 @@
 #include "BlockPan.h"
 #include "GameDefine.h"
 #include "Utils.h"
+#include "BlockController.h"
 
 
 BlockPan::BlockPan(void)
@@ -191,3 +192,86 @@ void BlockPan::showGameEnd()
 		}
 	}
 }
+
+void BlockPan::CheckForHint()
+{
+	BlockController::shareData()->hintBlocks->removeAllObjects();
+	BLOCK_FOREACH_CHILD(mGameLayer)
+	{
+		Block* block = (Block*)obj;
+		int findNum = 0;
+		if(BlockController::shareData()->hintBlocks->count()==0)
+		{
+			BlockController::shareData()->hintBlocks->addObject(block);
+		}
+		Block* target = NULL;
+		Block* centre = block;
+		do 
+		{
+			target = findBlockByCentre(centre,BlockController::shareData()->hintBlocks);
+			if(BlockController::shareData()->hintBlocks->containsObject(target))
+			{
+				target = NULL;
+			}
+			if(target)
+			{
+				BlockController::shareData()->hintBlocks->addObject(target);
+				centre = target;
+				if(BlockController::shareData()->hintBlocks->count()>2)
+					break;
+			}
+		} while (target !=NULL);
+		if(BlockController::shareData()->hintBlocks->count()>2)
+		{
+			break;
+		}
+		else
+		{
+			BlockController::shareData()->hintBlocks->removeAllObjects();
+		}
+	}
+	if(BlockController::shareData()->hintBlocks->count()==0)
+		return;
+	BlockController::shareData()->hintSprites->removeAllObjects();
+	CCARRAY_FOREACH(BlockController::shareData()->hintBlocks,obj)
+	{
+		Block* block = (Block*) obj;
+		CCSprite* hint = CCSprite::create(RESOURCE_PATH_CRYSTRAL("hint.png"));
+		hint->setPosition(block->getPosition());
+		this->addChild(hint);
+		CCFadeOut* eff = CCFadeOut::create(0.5f);
+		CCRepeatForever* act = CCRepeatForever::create(eff);
+		hint->runAction(act);
+		BlockController::shareData()->hintSprites->addObject(hint);
+	}
+
+}
+Block* BlockPan::findBlockByCentre(Block* centre,CCArray* ignorBlocks)
+{
+	int startLine = centre->mBlockPos->y-1;
+	int endLine = centre->mBlockPos->y+1;
+	int startCol = centre->mBlockPos->x-1;
+	int endCol = centre->mBlockPos->x+1;
+	for(int i = startLine;i<=endLine;i++)
+	{
+		if( i<0 || i== BLOCK_PAN_SIZE_H) continue;
+		for(int j = startCol;j<=endCol;j++)
+		{
+			if( j<0 || j== BLOCK_PAN_SIZE_W) continue;
+			Block* target = findBlockByPos(j,i);
+
+			if(	(centre->mBlockPos->x%2==0) 
+				&& abs(centre->mBlockPos->x - target->mBlockPos->x)==1 
+				&& (target->mBlockPos->y > centre->mBlockPos->y)
+				)
+				continue;
+			if(target->blockType == centre->blockType && target!=centre)
+			{
+				if(!ignorBlocks->containsObject(target))
+					return target;
+			}
+		}
+	}
+	return NULL;
+}
+
