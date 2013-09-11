@@ -173,6 +173,14 @@ void BlockPan::showGameEnd()
 		CCObject* obj = NULL;
 		CCArray* blocks = mGameLayer->getChildren();
 		srand(time(new time_t));
+		CCArray* blockBgs = mGameLayerBG->getChildren();
+		CCARRAY_FOREACH(blockBgs,obj)
+		{
+			CCNode* blockBg = (CCNode*) obj;
+			CCScaleTo* eff = CCScaleTo::create(0.2f,0);
+			CCSequence* act = CCSequence::create(eff,CCRemoveSelf::create(true),NULL);
+			blockBg->runAction(act);
+		}
 		CCARRAY_FOREACH(blocks,obj)
 		{
 			Block* block = (Block*)obj;
