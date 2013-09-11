@@ -274,4 +274,3 @@ Block* BlockPan::findBlockByCentre(Block* centre,CCArray* ignorBlocks)
 	}
 	return NULL;
 }
-
