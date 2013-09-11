@@ -34,8 +34,8 @@ public:
 	CCLayer* exitLayer;
 	CCSprite* logo;
 	void exitGame();
-	virtual void keyBackClicked();//Android ·µ»Ø¼ü
-	virtual void keyMenuClicked();//Android ²Ëµ¥¼ü
+	virtual void keyBackClicked();//Android âˆ‘ÂµÂªÃ¿ÂºÂ¸
+	virtual void keyMenuClicked();//Android â‰¤Ã€Âµâ€¢ÂºÂ¸
 	CCLayer* showExitLayer();
 	void onExitCancelBtn( CCObject* pSender );
 };

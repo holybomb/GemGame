@@ -1,7 +1,7 @@
 #include "GameData.h"
 #include "cocos2d.h"
 USING_NS_CC;
-static GameData* data = NULL;
+static GameData* gameData = NULL;
 
 GameData::GameData(void)
 {
@@ -13,19 +13,19 @@ void GameData::init()
 }
 GameData* GameData::shareData()
 {
-	if ( !data )
+	if ( !gameData )
 	{
-		data = new GameData();
-		data->init();
+		gameData = new GameData();
+		gameData->init();
 	}
 
-	return data;
+	return gameData;
 }
 
 
 GameData::~GameData(void)
 {
-	delete data;
+	delete gameData;
 }
 
 int GameData::getScore()

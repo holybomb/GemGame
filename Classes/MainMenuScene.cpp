@@ -188,7 +188,9 @@ void MainMenuScene::keyMenuClicked()
 void MainMenuScene::exitGame()
 {
 	CCDirector::sharedDirector()->end();
-	exit(0);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+//exit(0);
+#endif
 }
 
 CCScene* MainScene::scene()
