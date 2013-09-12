@@ -427,6 +427,8 @@ void GameScene::blocksRemove(CCArray* pSelects)
 				CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
 				CCSequence* act = CCSequence::create(removeFunc,NULL);
 				block->runAction(act);
+				
+				gameLayer->runAction(getShakeAction(gameLayer->getPosition()));
 			}
 			else
 			{
@@ -447,7 +449,18 @@ void GameScene::blocksRemove(CCArray* pSelects)
 	}
 	//rechargBlocks(removedPos);
 }
-
+CCAction* GameScene::getShakeAction(CCPoint pointBg)
+{
+	CCPoint pointL=pointBg;
+	CCPoint pointR=pointBg; 
+	pointL.x-=3; 
+	pointR.x+=3;
+	CCMoveTo* moveLeft=CCMoveTo::create(0.08, pointL); 
+	CCMoveTo* moveRight=CCMoveTo::create(0.08, pointR); 
+	CCFiniteTimeAction* action= CCSequence::create(moveLeft,moveRight,NULL);
+	CCActionInterval* actionShake=CCRepeat::create((CCActionInterval*)action,5); 
+	return actionShake;
+}
 void GameScene::blockFallDown( CCObject *obj )
 {
 	setTouchEnabled(false);

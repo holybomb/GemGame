@@ -62,5 +62,6 @@ public:
 	void moveIsDone();
 	void addTouchEffect(Block* block);
 	void updateThinkTimer(float dt);
+	CCAction* getShakeAction(CCPoint pointBg);
 };
 #endif // __HELLOWORLD_SCENE_H__
