@@ -4,28 +4,45 @@
 #include "Utils.h"
 #include "GameDefine.h"
 USING_NS_CC_EXT;
-
 Block* Block::create(int x,int y,int col)
+{
+	return Block::create(x,y,col,false);
+}
+Block* Block::create(int x,int y,int col,bool isBomb)
 {
 	Block *testSprite= new Block();
 	if(testSprite&&testSprite->init()){
 		testSprite->autorelease();
-		testSprite->customInit(x,y,col);//
+		testSprite->customInit(x,y,col,isBomb);//
 		return testSprite;
 	}
 	CC_SAFE_DELETE(testSprite);
 	return testSprite;
 }
-
 void Block::customInit(int x,int y,int col)
 {
-	int start = 0;
-	int end = 4;
-	float rnd = CCRANDOM_0_1();
-	int index = rnd*end+start;
-	CCString* file = CCString::createWithFormat("%i.png",index);
-	blockType = index;
-	initWithFile(RESOURCE_PATH_CRYSTRAL(file->getCString()));
+	customInit(x,y,col,false);
+}
+void Block::customInit(int x,int y,int col,bool mIsBomb)
+{
+	this->isBomb = mIsBomb;
+	if (mIsBomb)
+	{
+		blockType = -2;
+		initWithFile(RESOURCE_PATH_CRYSTRAL("bomb.png"));
+		CCLOG("bomb create");
+	}
+	else
+	{
+		int start = 0;
+		int end = 4;
+		float rnd = CCRANDOM_0_1();
+		int index = rnd*end+start;
+		CCString* file = CCString::createWithFormat("%i.png",index);
+		blockType = index;
+		initWithFile(RESOURCE_PATH_CRYSTRAL(file->getCString()));
+		CCLOG("block create");
+	}
 	mBlockPos = BlockPos::create(ccp(x,y),getPosition());
 	this->col = col;
 //	this->addChild(pBgSprite,-1,0);

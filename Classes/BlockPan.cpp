@@ -98,6 +98,10 @@ void BlockPan::showDebugTxt()
 }
 Block* BlockPan::createNewBlock(int x,int y,int col)
 {
+	return createNewBlock(x,y,col,false);
+}
+Block* BlockPan::createNewBlock(int x,int y,int col,bool isBomb)
+{
 	CCPoint pos;
 	int posX,posY;
 	posX = x*(sizeX*3/4)+sizeX/2;
@@ -107,7 +111,7 @@ Block* BlockPan::createNewBlock(int x,int y,int col)
 		posY += sizeY/2;
 	}
 	pos = ccp(posX,posY);
-	Block* newBlock = Block::create(x,y,col);
+	Block* newBlock = Block::create(x,y,col,isBomb);
 	newBlock->setPosition(pos);
 
 	newBlock->setBlockPosTile(x,y);
@@ -267,16 +271,27 @@ Block* BlockPan::findBlockByCentre(Block* centre,CCArray* ignorBlocks)
 		{
 			if( j<0 || j== BLOCK_PAN_SIZE_W) continue;
 			Block* target = findBlockByPos(j,i);
-
-			if(	(centre->mBlockPos->x%2==0) 
-				&& abs(centre->mBlockPos->x - target->mBlockPos->x)==1 
-				&& (target->mBlockPos->y > centre->mBlockPos->y)
-				)
-				continue;
-			if(target->blockType == centre->blockType && target!=centre)
+			if(target)
 			{
-				if(!ignorBlocks->containsObject(target))
-					return target;
+				if(	
+						(
+							(centre->mBlockPos->x%2==0) 
+							&& abs(centre->mBlockPos->x - target->mBlockPos->x)==1 
+							&& (target->mBlockPos->y > centre->mBlockPos->y)
+						)
+					||	
+						(
+							(centre->mBlockPos->x%2!=0) 
+							&& abs(centre->mBlockPos->x - target->mBlockPos->x)==1 
+							&& (target->mBlockPos->y < centre->mBlockPos->y)
+						)
+					)
+					continue;
+				if(target->blockType == centre->blockType && target!=centre)
+				{
+					if(!ignorBlocks->containsObject(target))
+						return target;
+				}
 			}
 		}
 	}

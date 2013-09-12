@@ -22,6 +22,7 @@ class Block : public CCSprite
 public:
 	bool isSelected;
 	bool isRemoved;
+	bool isBomb;
 	BlockPos * mBlockPos;
 	int col;
 	int blockType;
@@ -29,9 +30,11 @@ public:
 	Block();
 	~Block();
 	static Block* create(int x,int y,int col);
+	static Block* create(int x,int y,int col,bool isBomb);
 	void setBlockPosTile(int x,int y);
 	void setBlockPosTile(CCObject* point);
 	void setSelected(bool select);
 	void customInit(int x,int y,int col);
+	void customInit(int x,int y,int col,bool isBomb);
 	void blockRemove();
 };

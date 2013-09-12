@@ -34,6 +34,7 @@ bool GameScene::init()
     {
         return false;
     }
+	GameData::shareData()->init();
 	mTime = -4;
 	mSelectBlock = NULL;
 	CCSprite* bgSprite = CCSprite::create(RESOURCE_PATH_GAME("background.png"));
@@ -113,6 +114,13 @@ void GameScene::menuCloseCallback(CCObject* pSender)
 
 void GameScene::restartScene( CCObject* pSender )
 {
+	CCObject* obj;
+	mFreeTime = -1;
+	CCARRAY_FOREACH(BlockController::shareData()->hintSprites,obj)
+	{
+		CCNode* block = (CCNode*)obj;
+		block->removeFromParent();
+	}
 	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
 	this->runAction(CCSequence::create(CCDelayTime::create(1.5f),CCCallFunc::create(this,callfunc_selector(GameScene::backToMainMenu)),NULL));
@@ -160,6 +168,14 @@ CCLayer* GameScene::showTimerBoarder()
 }
 void GameScene::showGameEnd()
 {
+	CCObject* obj;
+	mFreeTime = -1;
+	CCARRAY_FOREACH(BlockController::shareData()->hintSprites,obj)
+	{
+		CCNode* block = (CCNode*)obj;
+		block->removeFromParent();
+	}
+
 	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
 	CCLayer* gameEndLayer = CCLayer::create();
@@ -260,6 +276,11 @@ void GameScene::ccTouchMoved( CCTouch *pTouch, CCEvent *pEvent )
 					&& abs(lastBlock->mBlockPos->x-block->mBlockPos->x)==1 
 					&& (block->mBlockPos->y>lastBlock->mBlockPos->y)
 				)
+			|| (
+					(lastBlock->mBlockPos->x%2!=0) 
+					&& abs(lastBlock->mBlockPos->x-block->mBlockPos->x)==1 
+					&& (block->mBlockPos->y<lastBlock->mBlockPos->y)
+				)
 			)
 		{
 			return;
@@ -284,39 +305,76 @@ void GameScene::addTouchEffect(Block* block)
 void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 {
 	if(!(BlockController::shareData()->mStartFlip)) return;
+	Block* firstBlock = (Block*)BlockController::shareData()->selectBlock->objectAtIndex(0);
+	bool isBomb = firstBlock->isBomb;
 	CCObject* obj = NULL;
+	CCArray* pSelects = CCArray::create();
 	CCArray* blocks = gameLayer->mGameLayer->getChildren();
-	BlockController::shareData()->selectBlock->removeAllObjects();
-	CCARRAY_FOREACH(blocks,obj)
+	if(isBomb)
 	{
-		Block* block = (Block*)obj;
-		if (BlockController::shareData()->selectBlock->containsObject(block))
+		BlockController::shareData()->selectBlock->removeAllObjects();
+		int maxH = BLOCK_PAN_SIZE_H;
+		if((firstBlock->mBlockPos->x)%2!=0)
+			maxH--;
+		for(int i=0;i<maxH;i++)
 		{
-			return;
-		}
-		if (block!=NULL && block->isSelected && !block->isRemoved)
-		{
+			Block* block = gameLayer->findBlockByPos(firstBlock->mBlockPos->x,i);
+			pSelects->addObject(block);
 			BlockController::shareData()->selectBlock->addObject(block);
 		}
 	}
-
+	else
+	{
+		CCARRAY_FOREACH(blocks,obj)
+		{
+			Block* block = (Block*)obj;
+			if (pSelects->containsObject(block))
+			{
+				return;
+			}
+			if (block!=NULL && block->isSelected && !block->isRemoved)
+			{
+				pSelects->addObject(block);
+			}
+		}
+	}
 	BlockController::shareData()->mStartFlip = false;
-	if(BlockController::shareData()->selectBlock->count()<3)
+	if(pSelects->count()<3)
 	{
 		BlockController::shareData()->resetSelect();
 		return;
 	}
-	int blockNum = BlockController::shareData()->selectBlock->count();
+	int blockNum = pSelects->count();
 	GameData::shareData()->addScore(PER_BLOCK_SCORE*((blockNum*(blockNum+1))/2));
 	updateScore(GameData::shareData()->getScore());
-	
+	if(BlockController::shareData()->selectBlock->count()<BLOCK_COMBO_NUM)
+		GameData::shareData()->setCombo(0);
+	else
+		GameData::shareData()->addCombo(1);
+	BlockController::shareData()->isCreateBomb = (GameData::shareData()->getCombo()>BOMB_COMBO_NUM);
+	int i =0;
 	CCARRAY_FOREACH(BlockController::shareData()->selectBlock,obj)
 	{
 		Block* block = (Block*)obj;
 		int lastLine = gameLayer->findLastLineByCol(block->mBlockPos->x);
-		gameLayer->mGameLayer->addChild(gameLayer->createNewBlock(block->mBlockPos->x,lastLine+1,block->mBlockPos->x));
+		int newX = block->mBlockPos->x;
+		int newY = lastLine+1;
+		int newCol = newX;
+		if(!isBomb && BlockController::shareData()->isCreateBomb && i == 0)
+		{
+			newY = block->mBlockPos->y;
+			pSelects->removeObject(block);
+			block->blockRemove();
+			BlockController::shareData()->bombSprite = gameLayer->createNewBlock(newX,newY,newCol,true);
+			gameLayer->mGameLayer->addChild(BlockController::shareData()->bombSprite);
+		}
+		else
+		{
+			gameLayer->mGameLayer->addChild(gameLayer->createNewBlock(newX,newY,newCol,false));
+		}
+		i++;
 	}
-	blocksRemove();
+	blocksRemove(pSelects);
 	mFreeTime = 0;
 }
 
@@ -325,12 +383,22 @@ GameScene::~GameScene()
 	
 }
 
-void GameScene::blocksRemove()
+void GameScene::blocksRemove(CCArray* pSelects)
 {
 	CCObject* obj = NULL;
+	Block* bombBlock = NULL;
+	CCARRAY_FOREACH(pSelects,obj)
+	{
+		Block* block = (Block*)obj;
+		if(block->isBomb)
+		{
+			bombBlock = block;
+			break;
+		}
+	}
 	CCArray* removedPos = CCArray::create();
 	removedPos->retain();
-	CCARRAY_FOREACH(BlockController::shareData()->selectBlock,obj)
+	CCARRAY_FOREACH(pSelects,obj)
 	{
 		Block* block = (Block*)obj;
 
@@ -341,7 +409,39 @@ void GameScene::blocksRemove()
 		BlockPos* pos = block->mBlockPos;
 		removedPos->addObject(pos);
 		int lastLine = gameLayer->findLastLineByCol(pos->x);
-		block->blockRemove();
+		if(!bombBlock && BlockController::shareData()->isCreateBomb)
+		{
+			CCPoint bombPos = BlockController::shareData()->bombSprite->getPosition();
+			CCMoveTo* moveTo = CCMoveTo::create(0.2,bombPos);
+			CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
+			CCSequence* act = CCSequence::create(moveTo,removeFunc,NULL);
+			block->runAction(act);
+		}
+		else if (bombBlock)
+		{
+			if(block == bombBlock)
+			{
+				CCAnimation* eff = CCAnimation::create();
+				eff->addSpriteFrameWithFileName(RESOURCE_PATH_CRYSTRAL("bomb-hi.png"));
+				eff->addSpriteFrameWithFileName(RESOURCE_PATH_CRYSTRAL("bomb-explo.png"));
+				CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
+				CCSequence* act = CCSequence::create(removeFunc,NULL);
+				block->runAction(act);
+			}
+			else
+			{
+				float offBlockX = CCRANDOM_MINUS1_1()*320.0f;
+				float time = CCRANDOM_0_1()+0.6;
+				int targetX = block->getPositionX()+offBlockX;
+				CCPoint bombPos = BlockController::shareData()->bombSprite->getPosition();
+				CCJumpTo* eff = CCJumpTo::create(0.3f,ccp(targetX,block->getPositionY()-1136),500.0f,1);
+				CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
+				CCSequence* act = CCSequence::create(eff,removeFunc,NULL);
+				block->runAction(act);
+			}
+		}
+		else
+			block->blockRemove();
 		if(block)
 			blockFallDown(block);
 	}

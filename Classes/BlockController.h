@@ -25,9 +25,10 @@ public:
 	bool mStartFlip;
 	CCArray* selectBlock;
 	CCArray* movedBlock;
-
+	bool isCreateBomb;
 	int mMainState;
 	int mSubState;
+	CCNode* bombSprite;
 	CCArray* hintBlocks;
 	CCArray* hintSprites;
 public:

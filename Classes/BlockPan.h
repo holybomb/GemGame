@@ -17,6 +17,7 @@ public:
 	CREATE_FUNC(BlockPan);
 	CCLayer* createGameLayer();
 	Block* createNewBlock(int x,int y,int col);
+	Block* createNewBlock(int x,int y,int col,bool isBomb);
 	Block* findBlockByPos(int x,int y);
 	void showGameEnd();
 	Block* findBlockByTouch(CCTouch* pTouch);

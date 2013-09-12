@@ -12,6 +12,7 @@ class GameData
 private:
 	int mScore;
 	int highScore;
+	int comboUp4Num;
 public:
 	GameData(void);
 	~GameData(void);
@@ -20,6 +21,11 @@ public:
 	int getScore();
 	void setScore(int score);
 	void addScore(int score);
+
+	int getCombo();
+	void setCombo(int combo);
+	void addCombo(int combo);
+
 	const char* getScoreString();
 	int getHighScore();
 	const char* getHighScoreString();

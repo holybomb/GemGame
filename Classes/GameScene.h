@@ -56,7 +56,7 @@ public:
 	bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
 	void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
 	void ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent);
-	void blocksRemove();
+	void blocksRemove(CCArray* pSelects);
 	void rechargBlocks(CCArray* basePos);
 	void blockFallDown( CCObject *obj );
 	void moveIsDone();

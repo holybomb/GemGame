@@ -10,6 +10,7 @@ void GameData::init()
 {
 	mScore = 0;
 	highScore = 0;
+	comboUp4Num = 0;
 }
 GameData* GameData::shareData()
 {
@@ -66,4 +67,19 @@ void GameData::setHighScore( int score )
 	{
 		highScore = score;
 	}
+}
+
+int GameData::getCombo()
+{
+	return comboUp4Num;
+}
+
+void GameData::setCombo( int combo )
+{
+	comboUp4Num = combo;
+}
+
+void GameData::addCombo( int combo )
+{
+	setCombo(getCombo()+combo);
 }

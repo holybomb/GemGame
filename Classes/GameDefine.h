@@ -11,3 +11,6 @@ USING_NS_CC;
 
 #define BLOCK_PAN_SIZE_W 6
 #define BLOCK_PAN_SIZE_H 7
+
+#define BLOCK_COMBO_NUM 4
+#define BOMB_COMBO_NUM 3

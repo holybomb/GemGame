@@ -24,6 +24,7 @@ void BlockController::init()
 	hintBlocks->retain();
 	hintSprites = CCArray::create();
 	hintSprites->retain();
+	bombSprite = NULL;
 }
 
 void BlockController::update( float dt )
