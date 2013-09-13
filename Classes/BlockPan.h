@@ -8,6 +8,7 @@ class BlockPan:public CCLayer
 public:
 	CCLayer* mGameLayerBG;
 	CCLayer* mGameLayer;
+	CCLayer* mGameLayerEffect;
 	int sizeX;
 	int sizeY;
 public:
@@ -25,5 +26,6 @@ public:
 	int findLastLineByCol(int col);
 	void CheckForHint();
 	Block* findBlockByCentre(Block* block,CCArray* ignorBlocks);
+	void createStarSprite(float dt);
 };
 

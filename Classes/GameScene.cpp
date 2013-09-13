@@ -89,6 +89,7 @@ void GameScene::countTime(float dt)
 		pr->runAction(to);
 		mFreeTime = 0;
 		schedule(schedule_selector(GameScene::updateThinkTimer),1);
+		gameLayer->schedule(schedule_selector(BlockPan::createStarSprite),0.5f);
 	}
 	
 	if (mTime>=TOTAL_GAME_TIME*80/100)
@@ -121,6 +122,8 @@ void GameScene::restartScene( CCObject* pSender )
 		CCNode* block = (CCNode*)obj;
 		block->removeFromParent();
 	}
+	gameLayer->unschedule(schedule_selector(BlockPan::createStarSprite));
+	gameLayer->mGameLayerEffect->removeAllChildren();
 	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
 	this->runAction(CCSequence::create(CCDelayTime::create(1.5f),CCCallFunc::create(this,callfunc_selector(GameScene::backToMainMenu)),NULL));
@@ -175,6 +178,8 @@ void GameScene::showGameEnd()
 		CCNode* block = (CCNode*)obj;
 		block->removeFromParent();
 	}
+	gameLayer->unschedule(schedule_selector(BlockPan::createStarSprite));
+	gameLayer->mGameLayerEffect->removeAllChildren();
 
 	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
@@ -412,7 +417,7 @@ void GameScene::blocksRemove(CCArray* pSelects)
 		if(!bombBlock && BlockController::shareData()->isCreateBomb)
 		{
 			CCPoint bombPos = BlockController::shareData()->bombSprite->getPosition();
-			CCMoveTo* moveTo = CCMoveTo::create(0.2,bombPos);
+			CCMoveTo* moveTo = CCMoveTo::create(0.2f,bombPos);
 			CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
 			CCSequence* act = CCSequence::create(moveTo,removeFunc,NULL);
 			block->runAction(act);
@@ -421,9 +426,6 @@ void GameScene::blocksRemove(CCArray* pSelects)
 		{
 			if(block == bombBlock)
 			{
-				CCAnimation* eff = CCAnimation::create();
-				eff->addSpriteFrameWithFileName(RESOURCE_PATH_CRYSTRAL("bomb-hi.png"));
-				eff->addSpriteFrameWithFileName(RESOURCE_PATH_CRYSTRAL("bomb-explo.png"));
 				CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
 				CCSequence* act = CCSequence::create(removeFunc,NULL);
 				block->runAction(act);
@@ -455,8 +457,8 @@ CCAction* GameScene::getShakeAction(CCPoint pointBg)
 	CCPoint pointR=pointBg; 
 	pointL.x-=3; 
 	pointR.x+=3;
-	CCMoveTo* moveLeft=CCMoveTo::create(0.08, pointL); 
-	CCMoveTo* moveRight=CCMoveTo::create(0.08, pointR); 
+	CCMoveTo* moveLeft=CCMoveTo::create(0.08f, pointL); 
+	CCMoveTo* moveRight=CCMoveTo::create(0.08f, pointR); 
 	CCFiniteTimeAction* action= CCSequence::create(moveLeft,moveRight,NULL);
 	CCActionInterval* actionShake=CCRepeat::create((CCActionInterval*)action,5); 
 	return actionShake;
@@ -594,4 +596,14 @@ void GameScene::updateThinkTimer(float dt)
 		gameLayer->CheckForHint();
 		mFreeTime = -1;
 	}
+}
+
+void GameScene::keyBackClicked()
+{
+
+}
+
+void GameScene::keyMenuClicked()
+{
+
 }

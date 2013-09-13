@@ -30,6 +30,13 @@ void Block::customInit(int x,int y,int col,bool mIsBomb)
 	{
 		blockType = -2;
 		initWithFile(RESOURCE_PATH_CRYSTRAL("bomb.png"));
+		CCSprite* hi = CCSprite::create(RESOURCE_PATH_CRYSTRAL("bomb-hi.png"));
+		hi->setPosition(getContentSize()/2);
+		addChild(hi);
+		CCFadeOut* act = CCFadeOut::create(1);
+		CCSequence* eff = CCSequence::create(act,act->reverse(),NULL);
+		CCRepeatForever* rep = CCRepeatForever::create(eff);
+		hi->runAction(rep);
 		CCLOG("bomb create");
 	}
 	else

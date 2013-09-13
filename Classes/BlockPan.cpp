@@ -39,6 +39,9 @@ CCLayer* BlockPan::createGameLayer()
 	mGameLayer->setContentSize(size);
 	mGameLayerBG = CCLayer::create();
 	mGameLayerBG->setContentSize(size);
+	mGameLayerEffect = CCLayer::create();
+	mGameLayerEffect->setContentSize(size);
+
 	for (int i =0;i<BLOCK_PAN_SIZE_W;i++)
 	{
 		int offH = 0;
@@ -62,6 +65,11 @@ CCLayer* BlockPan::createGameLayer()
 	mMainLayer->addChild(mGameLayer);
 	mGameLayer->setAnchorPoint(ccp(0,0));
 	mGameLayer->setPosition(ccp(0,0));
+
+	mMainLayer->addChild(mGameLayerEffect);
+	mGameLayerEffect->setAnchorPoint(ccp(0,0));
+	mGameLayerEffect->setPosition(ccp(0,0));
+	
 	return mMainLayer;
 }
 void BlockPan::showDebugTxt()
@@ -296,4 +304,22 @@ Block* BlockPan::findBlockByCentre(Block* centre,CCArray* ignorBlocks)
 		}
 	}
 	return NULL;
+}
+
+void BlockPan::createStarSprite(float dt)
+{
+	if(mGameLayerEffect->getChildrenCount()>BLOCK_EFFECT_MAX)
+		return;
+	
+	int i = CCRANDOM_0_1()*(BLOCK_PAN_SIZE_W-1);
+	int j = CCRANDOM_0_1()*(BLOCK_PAN_SIZE_H-1);
+	Block* block = findBlockByPos(i,j);
+	CCSprite* star = CCSprite::create(RESOURCE_PATH_CRYSTRAL("sparkle.png"));
+	star->setPosition(ccp(block->getPositionX()-block->getContentSize().width/2,block->getPositionY()+block->getContentSize().height/2));
+	CCFadeOut* eff = CCFadeOut::create(2.0f);
+	CCRepeat* rep=CCRepeat::create(eff,3);
+	CCSequence* act = CCSequence::create(rep,CCRemoveSelf::create(true),NULL);
+	star->runAction(act);
+	
+	mGameLayerEffect->addChild(star);
 }

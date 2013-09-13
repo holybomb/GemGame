@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "cocos2d.h"
 #include "cocos-ext.h"
@@ -34,8 +34,8 @@ public:
 	CCLayer* exitLayer;
 	CCSprite* logo;
 	void exitGame();
-	virtual void keyBackClicked();//Android ∑µªÿº¸
-	virtual void keyMenuClicked();//Android ≤Àµ•º¸
+	virtual void keyBackClicked();//Android 后退键
+	virtual void keyMenuClicked();//Android 菜单键
 	CCLayer* showExitLayer();
 	void onExitCancelBtn( CCObject* pSender );
 };

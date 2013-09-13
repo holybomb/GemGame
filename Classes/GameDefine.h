@@ -14,3 +14,5 @@ USING_NS_CC;
 
 #define BLOCK_COMBO_NUM 4
 #define BOMB_COMBO_NUM 3
+
+#define BLOCK_EFFECT_MAX 5
