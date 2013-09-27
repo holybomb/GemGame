@@ -172,7 +172,22 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resources\audios\click.wav" />
+    <None Include="..\Resources\audios\endgame.wav" />
+    <None Include="..\Resources\audios\gem-0.wav" />
+    <None Include="..\Resources\audios\gem-1.wav" />
+    <None Include="..\Resources\audios\gem-2.wav" />
+    <None Include="..\Resources\audios\gem-3.wav" />
+    <None Include="..\Resources\audios\gem-4.wav" />
+    <None Include="..\Resources\audios\loop.mp3" />
+    <None Include="..\Resources\audios\miss.wav" />
     <None Include="..\Resources\audios\pew-pew-lei.wav" />
+    <None Include="..\Resources\audios\powerup.wav" />
+    <None Include="..\Resources\audios\tap-0.wav" />
+    <None Include="..\Resources\audios\tap-1.wav" />
+    <None Include="..\Resources\audios\tap-2.wav" />
+    <None Include="..\Resources\audios\tap-3.wav" />
+    <None Include="..\Resources\audios\timer.wav" />
     <None Include="..\Resources\clickme-down.png" />
     <None Include="..\Resources\clickme.png" />
     <None Include="..\Resources\CloseNormal.png" />

@@ -18,6 +18,7 @@ bool MainMenuScene::init()
 	{
 		return false;
 	}
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic(RESOURCE_PATH_AUDIO("loop.mp3"),true);
 	//this->addChild(fg);
 	this->setKeypadEnabled(true);
 	logo = CCSprite::create(RESOURCE_PATH_MENU("logo.png"));

@@ -1,10 +1,8 @@
 ﻿#include "GameScene.h"
 #include "GameData.h"
 #include "MainMenuScene.h"
-#include "SimpleAudioEngine.h"
 USING_NS_CC;
 USING_NS_CC_EXT;
-using namespace CocosDenshion;
 static GameScene* gameScene = NULL;
 GameScene* GameScene::shareGameScene()
 {
@@ -36,7 +34,17 @@ bool GameScene::init()
     {
         return false;
     }
-	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("pew-pew-lei.wav"));
+	//加载音效
+	for (int i =0;i<5;i++)
+	{
+		CCString* soundFile = CCString::createWithFormat("gem-%d.wav",i);
+		SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO(soundFile->getCString()));
+	}
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("powerup.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("miss.wav"));
+	//加载音乐
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("timer.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("endgame.wav"));
 	GameData::shareData()->init();
 	mTime = -4;
 	mSelectBlock = NULL;
@@ -95,6 +103,12 @@ void GameScene::countTime(float dt)
 		gameLayer->schedule(schedule_selector(BlockPan::createStarSprite),0.5f);
 	}
 	
+	if (mTime==TOTAL_GAME_TIME*80/100)
+	{
+		if(SimpleAudioEngine::sharedEngine()->isBackgroundMusicPlaying())
+			SimpleAudioEngine::sharedEngine()->stopBackgroundMusic(false);
+		SimpleAudioEngine::sharedEngine()->playBackgroundMusic(RESOURCE_PATH_AUDIO("timer.wav"),true);
+	}
 	if (mTime>=TOTAL_GAME_TIME*80/100)
 	{
 		pr->runAction(CCBlink::create(0.3f,4));
@@ -208,6 +222,9 @@ void GameScene::showGameEnd()
 	imageItem->setScale(3.0f);
 	gameEndLayer->addChild(menu);
 	this->addChild(gameEndLayer,100,this->getChildrenCount());
+	if(SimpleAudioEngine::sharedEngine()->isBackgroundMusicPlaying())
+		SimpleAudioEngine::sharedEngine()->stopBackgroundMusic(false);
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic(RESOURCE_PATH_AUDIO("endgame.wav"));
 }
 void GameScene::updateScore(float dt)
 {
@@ -350,6 +367,7 @@ void GameScene::ccTouchEnded( CCTouch *pTouch, CCEvent *pEvent )
 	if(pSelects->count()<3)
 	{
 		BlockController::shareData()->resetSelect();
+		SimpleAudioEngine::sharedEngine()->playEffect(RESOURCE_PATH_AUDIO("miss.wav"));
 		return;
 	}
 	int blockNum = pSelects->count();
@@ -405,15 +423,10 @@ void GameScene::blocksRemove(CCArray* pSelects)
 		}
 	}
 	CCArray* removedPos = CCArray::create();
-	removedPos->retain();
 	CCARRAY_FOREACH(pSelects,obj)
 	{
 		Block* block = (Block*)obj;
 
-		CCParticleSystem *meteor=CCParticleSystemQuad::create("particles/taken-gem.plist");
-		gameLayer->addChild(meteor);
-		meteor->setScale(2);
-		meteor->setPosition(block->getPosition());
 		BlockPos* pos = block->mBlockPos;
 		removedPos->addObject(pos);
 		int lastLine = gameLayer->findLastLineByCol(pos->x);
@@ -427,6 +440,10 @@ void GameScene::blocksRemove(CCArray* pSelects)
 		}
 		else if (bombBlock)
 		{
+			CCParticleSystem *meteor=CCParticleSystemQuad::create("particles/fire_exploding.plist");
+			gameLayer->addChild(meteor);
+			meteor->setScale(2);
+			meteor->setPosition(block->getPosition());
 			if(block == bombBlock)
 			{
 				CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
@@ -440,7 +457,7 @@ void GameScene::blocksRemove(CCArray* pSelects)
 				float offBlockX = CCRANDOM_MINUS1_1()*320.0f;
 				float time = CCRANDOM_0_1()+0.6;
 				int targetX = block->getPositionX()+offBlockX;
-				CCPoint bombPos = BlockController::shareData()->bombSprite->getPosition();
+				
 				CCJumpTo* eff = CCJumpTo::create(0.3f,ccp(targetX,block->getPositionY()-1136),500.0f,1);
 				CCCallFunc* removeFunc = CCCallFunc::create(block,callfunc_selector(Block::blockRemove));
 				CCSequence* act = CCSequence::create(eff,removeFunc,NULL);
@@ -448,9 +465,25 @@ void GameScene::blocksRemove(CCArray* pSelects)
 			}
 		}
 		else
+		{
+			CCParticleSystem *meteor=CCParticleSystemQuad::create("particles/taken-gem.plist");
+			gameLayer->addChild(meteor);
+			meteor->setScale(2);
+			meteor->setPosition(block->getPosition());
 			block->blockRemove();
+		}
 		if(block)
 			blockFallDown(block);
+	}
+	if(bombBlock == NULL)
+	{
+		int soundType = GameData::shareData()->getCombo()>4?4:GameData::shareData()->getCombo();
+		CCString* soundFile = CCString::createWithFormat("gem-%d.wav",soundType);
+		SimpleAudioEngine::sharedEngine()->playEffect(RESOURCE_PATH_AUDIO(soundFile->getCString()));
+	}
+	else
+	{
+		SimpleAudioEngine::sharedEngine()->playEffect(RESOURCE_PATH_AUDIO("powerup.wav"));
 	}
 	//rechargBlocks(removedPos);
 }
@@ -463,7 +496,7 @@ CCAction* GameScene::getShakeAction(CCPoint pointBg)
 	CCMoveTo* moveLeft=CCMoveTo::create(0.08f, pointL); 
 	CCMoveTo* moveRight=CCMoveTo::create(0.08f, pointR); 
 	CCFiniteTimeAction* action= CCSequence::create(moveLeft,moveRight,NULL);
-	CCActionInterval* actionShake=CCRepeat::create((CCActionInterval*)action,5); 
+	CCActionInterval* actionShake=CCRepeat::create((CCActionInterval*)action,3); 
 	return actionShake;
 }
 void GameScene::blockFallDown( CCObject *obj )
@@ -501,6 +534,7 @@ void GameScene::blockFallDown( CCObject *obj )
 		//blockAbove->refreshTxt();
 		blockBase = blockAbove;
 	}
+
 }
 
 void GameScene::moveIsDone()
@@ -508,7 +542,6 @@ void GameScene::moveIsDone()
 	BlockController::shareData()->mCurType = -1;
 	setTouchEnabled(true);
 	updateScore(0);
-	SimpleAudioEngine::sharedEngine()->playEffect(RESOURCE_PATH_AUDIO("pew-pew-lei.wav"));
 	BlockController::shareData()->selectBlock->removeAllObjects();
 	BlockController::shareData()->movedBlock->removeAllObjects();
 }

@@ -229,5 +229,50 @@
     <None Include="..\Resources\audios\pew-pew-lei.wav">
       <Filter>Resources\audios</Filter>
     </None>
+    <None Include="..\Resources\audios\click.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\endgame.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\gem-0.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\gem-1.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\gem-2.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\gem-3.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\gem-4.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\loop.mp3">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\miss.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\powerup.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\tap-0.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\tap-1.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\tap-2.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\tap-3.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
+    <None Include="..\Resources\audios\timer.wav">
+      <Filter>Resources\audios</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 #pragma once
 #include "cocos2d.h"
 #include "GameDefine.h"
+#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 #define BLOCK_PAN_STATUS_INIT 0
 #define BLOCK_PAN_STATUS_RUN BLOCK_PAN_STATUS_INIT+1
 #define BLOCK_PAN_STATUS_SHOW_END BLOCK_PAN_STATUS_RUN+1
