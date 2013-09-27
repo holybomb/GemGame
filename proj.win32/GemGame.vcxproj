@@ -172,6 +172,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resources\audios\pew-pew-lei.wav" />
     <None Include="..\Resources\clickme-down.png" />
     <None Include="..\Resources\clickme.png" />
     <None Include="..\Resources\CloseNormal.png" />
@@ -210,6 +211,8 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
     <None Include="..\Resources\menuscene\logo.png" />
     <None Include="..\Resources\particles\bg-stars.plist" />
     <None Include="..\Resources\particles\falling-gem.plist" />
+    <None Include="..\Resources\particles\fire.png" />
+    <None Include="..\Resources\particles\fire_exploding.plist" />
     <None Include="..\Resources\particles\power-play.plist" />
     <None Include="..\Resources\particles\taken-gem.plist" />
     <None Include="..\Resources\particles\taken-gem.png" />

@@ -25,6 +25,9 @@
     <Filter Include="win32">
       <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\audios">
+      <UniqueIdentifier>{46a2d101-baaf-439e-a7eb-98212ef1c101}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -216,6 +219,15 @@
     </None>
     <None Include="..\Resources\crystrals\hint.png">
       <Filter>Resources\crystrals</Filter>
+    </None>
+    <None Include="..\Resources\particles\fire.png">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\particles\fire_exploding.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
+    <None Include="..\Resources\audios\pew-pew-lei.wav">
+      <Filter>Resources\audios</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -1,8 +1,10 @@
 ﻿#include "GameScene.h"
 #include "GameData.h"
 #include "MainMenuScene.h"
+#include "SimpleAudioEngine.h"
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace CocosDenshion;
 static GameScene* gameScene = NULL;
 GameScene* GameScene::shareGameScene()
 {
@@ -34,6 +36,7 @@ bool GameScene::init()
     {
         return false;
     }
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("pew-pew-lei.wav"));
 	GameData::shareData()->init();
 	mTime = -4;
 	mSelectBlock = NULL;
@@ -66,10 +69,10 @@ void GameScene::countTime(float dt)
 				if(block)
 				{
 					block->setVisible(true);
-					block->setPosition(ccp(block->getPositionX(),gameLayer->mGameLayer->getContentSize().height+80));
+					block->setPosition(ccp(block->getPositionX(),1200));
 					CCMoveTo* moveTo = CCMoveTo::create(0.5f,block->mBlockPos->pos);
 					CCEaseSineInOut * easeIn = CCEaseSineInOut::create(moveTo);
-					block->runAction(CCSequence::create(CCDelayTime::create(0.15f*j),easeIn,NULL));
+					block->runAction(CCSequence::create(CCDelayTime::create(0.1f*j),easeIn,NULL));
 				}
 			}
 			totalInitTime+=0.5f+0.15f*j;
@@ -505,6 +508,7 @@ void GameScene::moveIsDone()
 	BlockController::shareData()->mCurType = -1;
 	setTouchEnabled(true);
 	updateScore(0);
+	SimpleAudioEngine::sharedEngine()->playEffect(RESOURCE_PATH_AUDIO("pew-pew-lei.wav"));
 	BlockController::shareData()->selectBlock->removeAllObjects();
 	BlockController::shareData()->movedBlock->removeAllObjects();
 }
