@@ -441,7 +441,8 @@ void GameScene::blocksRemove(CCArray* pSelects)
 				CCSequence* act = CCSequence::create(removeFunc,NULL);
 				block->runAction(act);
 				
-				gameLayer->runAction(getShakeAction(gameLayer->getPosition()));
+				//gameLayer->runAction(getShakeAction(gameLayer->getPosition()));
+				ZhenPing(0.5f);
 			}
 			else
 			{
@@ -489,6 +490,18 @@ CCAction* GameScene::getShakeAction(CCPoint pointBg)
 	CCFiniteTimeAction* action= CCSequence::create(moveLeft,moveRight,NULL);
 	CCActionInterval* actionShake=CCRepeat::create((CCActionInterval*)action,3); 
 	return actionShake;
+
+}
+void GameScene::ZhenPing(int t)
+{
+	CCScene* f = CCDirector::sharedDirector()->getRunningScene();
+	CCPoint size = gameLayer->getPosition();
+	CCMoveTo* left1 = CCMoveTo::create(0.05f,ccp(size.x+5,size.y));
+	CCMoveTo* right1 = CCMoveTo::create(0.05f,ccp(size.x-5,size.y));
+	CCMoveTo* top1 = CCMoveTo::create(0.05f,ccp(size.x,size.y+5));
+	CCMoveTo* rom1 = CCMoveTo::create(0.05f,ccp(size.x,size.y-5));
+	CCFiniteTimeAction* action3 = CCSequence::create(left1,right1,top1,rom1,NULL);
+	gameLayer->runAction(action3);
 }
 void GameScene::blockFallDown( CCObject *obj )
 {

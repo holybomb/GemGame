@@ -65,5 +65,6 @@ public:
 	CCAction* getShakeAction(CCPoint pointBg);
 	virtual void keyBackClicked();//Android 后退键
 	virtual void keyMenuClicked();//Android 菜单键
+	void ZhenPing(int t);
 };
 #endif // __HELLOWORLD_SCENE_H__
