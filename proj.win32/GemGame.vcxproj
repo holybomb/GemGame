@@ -225,6 +225,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\..\external\libwebsockets\win32\lib\*.*" "$(OutD
     <None Include="..\Resources\menuscene\btn-play.png" />
     <None Include="..\Resources\menuscene\logo.png" />
     <None Include="..\Resources\particles\bg-stars.plist" />
+    <None Include="..\Resources\particles\ExplodingRing.plist" />
     <None Include="..\Resources\particles\falling-gem.plist" />
     <None Include="..\Resources\particles\fire.png" />
     <None Include="..\Resources\particles\fire_exploding.plist" />

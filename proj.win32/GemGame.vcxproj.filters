@@ -274,5 +274,8 @@
     <None Include="..\Resources\audios\timer.wav">
       <Filter>Resources\audios</Filter>
     </None>
+    <None Include="..\Resources\particles\ExplodingRing.plist">
+      <Filter>Resources\particles</Filter>
+    </None>
   </ItemGroup>
 </Project>

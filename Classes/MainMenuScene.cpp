@@ -18,6 +18,18 @@ bool MainMenuScene::init()
 	{
 		return false;
 	}
+	//º”‘ÿ“Ù–ß
+	for (int i =0;i<5;i++)
+	{
+		CCString* soundFile = CCString::createWithFormat("gem-%d.wav",i);
+		SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO(soundFile->getCString()));
+	}
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("powerup.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("miss.wav"));
+	//º”‘ÿ“Ù¿÷
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("timer.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("endgame.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("loop.mp3"));
 	SimpleAudioEngine::sharedEngine()->playBackgroundMusic(RESOURCE_PATH_AUDIO("loop.mp3"),true);
 	//this->addChild(fg);
 	this->setKeypadEnabled(true);
@@ -79,6 +91,7 @@ void MainMenuScene::onPlayBtn(CCObject* pSender)
 			NULL
 		)
 	);
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("click.wav"));
 }
 
 void MainMenuScene::startPlay()
@@ -87,6 +100,7 @@ void MainMenuScene::startPlay()
 }
 void MainMenuScene::onExitDoneBtn( CCObject* pSender )
 {
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("click.wav"));
 	exitGame();
 }
 void MainMenuScene::onExitCancelBtn( CCObject* pSender )
@@ -96,6 +110,7 @@ void MainMenuScene::onExitCancelBtn( CCObject* pSender )
 	exitLayer->runAction(scaleSmall);
 	exitLayer = NULL;
 	mainMenu->setEnabled(true);
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("click.wav"));
 }
 
 void MainMenuScene::onAboutBtn( CCObject* pSender )
@@ -110,6 +125,7 @@ void MainMenuScene::onAboutBtn( CCObject* pSender )
 	aboutLayer->setVisible(false);
 	aboutLayer->runAction(act);
 	addChild(aboutLayer);
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("click.wav"));
 }
 CCLayer* MainMenuScene::showExitLayer()
 {
@@ -283,4 +299,42 @@ Block* MainMenuBGLayer::createOneStar()
 			NULL)
 	);
 	return block;
+}
+
+CCScene* MainMenuLoadingScene::scene()
+{
+	CCScene* loadScene = CCScene::create();
+	MainMenuBGLayer* bgLayer = MainMenuBGLayer::create();
+	MainMenuLoadingScene* fgLayer = MainMenuLoadingScene::create();
+	loadScene->addChild(bgLayer);
+	loadScene->addChild(fgLayer);
+	return loadScene;
+}
+
+bool MainMenuLoadingScene::init()
+{
+	if (!CCLayer::init())
+	{
+		return false;
+	}
+	schedule(schedule_selector(MainMenuLoadingScene::loadSound));
+	return true;
+}
+
+void MainMenuLoadingScene::loadSound( float delta )
+{
+	//º”‘ÿ“Ù–ß
+	for (int i =0;i<5;i++)
+	{
+		CCString* soundFile = CCString::createWithFormat("gem-%d.wav",i);
+		SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO(soundFile->getCString()));
+	}
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("powerup.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("miss.wav"));
+	//º”‘ÿ“Ù¿÷
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("timer.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("endgame.wav"));
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("loop.mp3"));
+	CCDirector::sharedDirector()->replaceScene(MainScene::scene());
+	unschedule(schedule_selector(MainMenuLoadingScene::loadSound));
 }

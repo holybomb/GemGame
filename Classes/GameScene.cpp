@@ -34,17 +34,7 @@ bool GameScene::init()
     {
         return false;
     }
-	//加载音效
-	for (int i =0;i<5;i++)
-	{
-		CCString* soundFile = CCString::createWithFormat("gem-%d.wav",i);
-		SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO(soundFile->getCString()));
-	}
-	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("powerup.wav"));
-	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("miss.wav"));
-	//加载音乐
-	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("timer.wav"));
-	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(RESOURCE_PATH_AUDIO("endgame.wav"));
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic(RESOURCE_PATH_AUDIO("loop.mp3"),true);
 	GameData::shareData()->init();
 	mTime = -4;
 	mSelectBlock = NULL;
@@ -144,6 +134,7 @@ void GameScene::restartScene( CCObject* pSender )
 	gameLayer->showGameEnd();
 	timeBoard->runAction(CCMoveTo::create(0.3f,ccp(0,DESIGN_SCREEN_SIZE_H+158)));
 	this->runAction(CCSequence::create(CCDelayTime::create(1.5f),CCCallFunc::create(this,callfunc_selector(GameScene::backToMainMenu)),NULL));
+	SimpleAudioEngine::sharedEngine()->preloadEffect( RESOURCE_PATH_AUDIO("click.wav"));
 }
 void GameScene::backToMainMenu(CCObject* obj)
 {
@@ -440,7 +431,7 @@ void GameScene::blocksRemove(CCArray* pSelects)
 		}
 		else if (bombBlock)
 		{
-			CCParticleSystem *meteor=CCParticleSystemQuad::create("particles/fire_exploding.plist");
+			CCParticleSystem *meteor=CCParticleSystemQuad::create("particles/ExplodingRing.plist");
 			gameLayer->addChild(meteor);
 			meteor->setScale(2);
 			meteor->setPosition(block->getPosition());

@@ -50,4 +50,11 @@ public:
 	CCLayer* mBgEffectLayer;
 	CCLayer* mBgParticleLayer;
 };
-
+class MainMenuLoadingScene : public CCLayer
+{
+public:
+	static CCScene* scene();
+	bool init();
+	void loadSound(float delta);
+	CREATE_FUNC(MainMenuLoadingScene);
+};
